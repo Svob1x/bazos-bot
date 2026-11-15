@@ -31,7 +31,7 @@ CENA_OD = ""                          # např. "2000", prázdné = bez omezení
 CENA_DO = "12000"                     # max. cena v Kč, prázdné = bez omezení
 PSC = ""                              # např. "11000" pro hledání v okolí
 OKOLI_KM = "25"                       # okruh kolem PSČ
-POCET_STRAN = 2                       # kolik stránek výsledků projít (20 inzerátů / strana)
+POCET_STRAN = 2                       # kolik stránek výsledků projít (40 inzerátů / strana)
 INTERVAL_MIN = 15                     # interval pro režim --loop
 
 # Kontrola, že inzerát opravdu odpovídá (hledá se v nadpisu + popisku)
@@ -50,13 +50,14 @@ HEADERS = {
 
 
 def url_stranky(strana: int) -> str:
-    offset = "" if strana == 0 else f"{strana * 20}/"
+    # Bazoš: 1. strana = "/", další strany "/40/", "/80/"... (40 inzerátů na stranu)
+    offset = "" if strana == 0 else f"{strana * 40}/"
     params = (
         f"hledat={quote_plus(HLEDANY_TEXT)}&rubriky=auto"
         f"&hlokalita={PSC}&humkreis={OKOLI_KM}"
-        f"&cenaod={CENA_OD}&cenado={CENA_DO}&order=&kitx=ano"
+        f"&cenaod={CENA_OD}&cenado={CENA_DO}&Submit=Hledat&order=&crp=&kitx=ano"
     )
-    return f"{ZAKLAD}/{offset}?{params}" if offset else f"{ZAKLAD}/search.php?{params}"
+    return f"{ZAKLAD}/{offset}?{params}"
 
 
 def stahni_inzeraty() -> list[dict]:
